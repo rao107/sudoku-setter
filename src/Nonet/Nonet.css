@@ -1,0 +1,6 @@
+.nonet {
+  display: grid;
+  grid-template-columns: min-content min-content min-content;
+  border-style: solid;
+  border-width: 3px;
+}
