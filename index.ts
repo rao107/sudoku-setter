@@ -1,14 +1,42 @@
 import * as z3 from 'z3-solver';
+import setup from './setup'
 declare global {
   interface Window { z3Promise: ReturnType<typeof z3.init>; }
 }
 
+// Used in getValue to cache the HTMLInputElements
+let getValueBlocks: {[index:string]:HTMLInputElement} = {};
 function getValue(x:number, y:number):number{
-  let elem = (<HTMLInputElement>document.getElementById(`i${x}${y}`));
+  if (x < 1 || x > 9) {
+    throw new Error(`Invalid value of ${x} for x`);
+  }
+  if (y < 1 || y > 9) {
+    throw new Error(`Invalid value of ${y} for y`);
+  }
+  let key = `i${x}${y}`;
+  if (key in getValueBlocks) {
+    return parseInt(getValueBlocks[key].value);
+  }
+  let elem = (<HTMLInputElement>document.getElementById(key));
   if (elem === null || elem.value === "") {
     return 0;
   }
+  // Cache because getElementById is slow
+  getValueBlocks[`${x}${y}`] = elem;
   return parseInt(elem.value);
+}
+
+// Grabs the constraints div and gets the id's of all checked children inputs 
+function getConstraints():string[]{
+  let out:string[] = [];
+  document.getElementById("constraints")
+    ?.querySelectorAll("input")
+    ?.forEach(child=>{
+      if (child.checked) out.push(child.id);
+    })
+  setup()
+
+  return out;
 }
 
 window.z3Promise = z3.init();
@@ -22,6 +50,8 @@ if (runBtn === undefined || runBtn === null) {
   console.error("no run btn");
 } else {
   runBtn.addEventListener('click', async event => {
+    console.log(getConstraints());
+
     // We can likely put most of the checking logic in here
     //  I just copied what they had for Z3 and shoved it in here
     //  to make sure it wasn't just available at page run

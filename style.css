@@ -1,6 +1,7 @@
 body {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .grid {
@@ -20,4 +21,8 @@ body {
   height: 55px;
   text-align: center;
   font-size: 2rem;
+}
+
+#constraints {
+  float: left;
 }

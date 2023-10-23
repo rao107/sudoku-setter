@@ -1,12 +1,11 @@
 {
-    "include": ["index.ts"],
+    "include": ["index.ts", "setup.ts"],
     "compilerOptions": {
         "target": "es2019",
         "module": "commonjs",
         "moduleResolution": "node",
         "strict": true,
         "noEmit": true,
-        "ignoreDeprecations": "5.0",
         "importsNotUsedAsValues": "error",
         "lib": ["es5", "es2019", "dom", "dom.iterable"],
         "typeRoots": [

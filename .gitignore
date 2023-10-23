@@ -1,1 +1,3 @@
 node_modules/
+# This should be removed when we want to deploy on Github pages
+build/index.js

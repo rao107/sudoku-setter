@@ -12,12 +12,34 @@
   <link rel="stylesheet" type="text/css" href="style.css">
 
   <link rel="icon" href="icon.svg">
-
+  <title>Sudoku Setter</title>
   <script src="./coi-serviceworker.js" defer></script>
   <script src="./build/z3-built.js" defer></script>
   <script src="./build/index.js" defer></script>
 </head>
 <body>
+  <div id="constraints">
+    <h2>Constraints</h2>
+    <input type="checkbox" name="1-9horiz" id="1-9horiz" checked>
+      <label for="1-9horiz">1-9 in Horizontal</label><br>
+    <input type="checkbox" name="1-9vert" id="1-9vert" checked>
+      <label for="1-9vert">1-9 in Vertical</label><br>
+    <input type="checkbox" name="1-9nonet" id="1-9nonet" checked>
+      <label for="1-9nonet">1-9 in Nonets</label><br>
+    <input type="checkbox" name="antiknight" id="antiknight" disabled>
+      <label for="antiknight">Anti-Knight (TODO)</label><br>
+    <input type="checkbox" name="antiking" id="antiking" disabled>
+      <label for="antiking">Anti-King (TODO)</label><br>
+    <input type="checkbox" name="thermo" id="thermo" disabled>
+      <label for="thermo">Thermo (TODO)</label><br>
+    <input type="checkbox" name="arrow" id="arrow" disabled>
+      <label for="arrow">Arrows (TODO)</label><br>
+    <input type="checkbox" name="kropki" id="kropki" disabled>
+      <label for="kropki">Kropki Dots (TODO)</label><br>
+    <input type="checkbox" name="german-whispers" id="german-whispers" disabled>
+      <label for="german-whispers">German Whispers (TODO)</label><br>
+  </div>
+  <!-- <canvas></canvas> -->
   <div class="grid">
     <div class="nonet">
       <div class="box" id="b11"><input type="text" maxLength="1" class="box" id="i11"></div>
@@ -119,6 +141,23 @@
       <div class="box" id="b99"><input type="text" maxLength="1" class="box" id="i99"></div>
     </div>
     <button id="run">Run something in Z3</button>
+  </div>
+  <div id="place-constraints">
+    <h2>Input method</h2>
+    <!-- This will have many radio buttons for placing the different constraints. Can disable ones that aren't enabled -->
+    <input type="radio" name="input-type" id="input-numbers" checked>
+      <label for="input-numbers">Given Digits</label><br>
+    <input type="radio" name="input-type" id="input-thermo">
+      <label for="input-thermo">Thermo</label><br>
+    
+    <input type="radio" name="input-type" id="input-arrow">
+      <label for="input-arrow">Arrow</label><br>
+
+    <input type="radio" name="input-type" id="input-kropki">
+      <label for="input-kropki">Kropki</label><br>
+    
+    <input type="radio" name="input-type" id="input-german">
+      <label for="input-german">German Whispers</label><br>
   </div>
 </body>
 </html>
