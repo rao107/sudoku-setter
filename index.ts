@@ -43,7 +43,8 @@ if (runBtn === undefined || runBtn === null) {
   console.error("no run btn");
 } else {
   runBtn.addEventListener("click", async () => {
-    console.log(getConstraints());
+    let constraints = getConstraints();
+    console.log(constraints);
 
     const sudokuGrid: number[][] = getGrid();
     console.log(sudokuGrid);
@@ -65,25 +66,59 @@ if (runBtn === undefined || runBtn === null) {
     }
 
     // 1-9horiz
-    for (let i = 0; i < 9; i++) {
-      solver.add(Distinct(...z3Grid[i]));
+    if (constraints.includes('1-9horiz')) {
+      for (let i = 0; i < 9; i++) {
+        solver.add(Distinct(...z3Grid[i]));
+      }
     }
 
     // 1-9vert
-    for (let i = 0; i < 9; i++) {
-      solver.add(Distinct(...z3Grid.map(row => row[i])))
+    if (constraints.includes('1-9vert')) {
+      for (let i = 0; i < 9; i++) {
+        solver.add(Distinct(...z3Grid.map(row => row[i])))
+      }
     }
 
     // 1-9nonet
-    // you could also probably use distinct here too but idk
-    for (let i = 0; i < 9; i++) {
-      for (let j = 0; j < 9; j++) {
-        for (let k = j + 1; k < 9; k++) {
-          let i_0 = (Math.floor(i / 3) * 3) + Math.floor(j / 3);
-          let j_0 = ((i % 3) * 3) + (j % 3);
-          let i_1 = (Math.floor(i / 3) * 3) + Math.floor(k / 3);
-          let j_1 = ((i % 3) * 3) + (k % 3);
-          solver.add(z3Grid[i_0][j_0].neq(z3Grid[i_1][j_1]));
+    if (constraints.includes('1-9nonet')) {
+      for (let i = 0; i < 9; i += 3) {
+        for (let j = 0; j < 9; j += 3) {
+          let squares = Array.from({length: 9}, (_, k) => k).map((k) => {
+            return [i + Math.floor(k / 3), j + k % 3];
+          });
+          solver.add(Distinct(...squares.map(([row, col]) => z3Grid[row][col])));
+        }
+      }
+    }
+
+    // antiking
+    if (constraints.includes('antiking')) {
+      let offsets = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+      for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+          let squares =
+            offsets
+            .map(([i_0, j_0]) => [i + i_0, j + j_0])
+            .filter(([i_0, j_0]) => (0 <= i_0) && (i_0 < 9) && (0 <= j_0) && (j_0 < 9));
+          squares.forEach(([row, col]) => {
+            solver.add(z3Grid[i][j].neq(z3Grid[row][col]));
+          });
+        }
+      }
+    }
+
+    // antiknight
+    if (constraints.includes('antiknight')) {
+      let offsets = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]];
+      for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+          let squares =
+            offsets
+            .map(([i_0, j_0]) => [i + i_0, j + j_0])
+            .filter(([i_0, j_0]) => (0 <= i_0) && (i_0 < 9) && (0 <= j_0) && (j_0 < 9));
+          squares.forEach(([row, col]) => {
+            solver.add(z3Grid[i][j].neq(z3Grid[row][col]));
+          });
         }
       }
     }
