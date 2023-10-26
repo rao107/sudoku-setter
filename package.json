@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "copy-files": "mkdir -p build && cp node_modules/z3-solver/build/z3-built.js node_modules/z3-solver/build/z3-built.wasm node_modules/z3-solver/build/z3-built.worker.js build",
+    "copy-files": "rm -rf build && mkdir build && cp node_modules/z3-solver/build/z3-built.js node_modules/z3-solver/build/z3-built.wasm node_modules/z3-solver/build/z3-built.worker.js build",
     "check": "tsc",
     "bundle": "webpack --mode=development",
     "build": "npm run check && npm run copy-files && npm run bundle"

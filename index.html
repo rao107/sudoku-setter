@@ -18,146 +18,148 @@
   <script src="./build/index.js" defer></script>
 </head>
 <body>
-  <div id="constraints">
-    <h2>Constraints</h2>
-    <input type="checkbox" name="1-9horiz" id="1-9horiz" checked>
-      <label for="1-9horiz">1-9 in Horizontal</label><br>
-    <input type="checkbox" name="1-9vert" id="1-9vert" checked>
-      <label for="1-9vert">1-9 in Vertical</label><br>
-    <input type="checkbox" name="1-9nonet" id="1-9nonet" checked>
-      <label for="1-9nonet">1-9 in Nonets</label><br>
-    <input type="checkbox" name="antiknight" id="antiknight">
-      <label for="antiknight">Anti-Knight</label><br>
-    <input type="checkbox" name="antiking" id="antiking">
-      <label for="antiking">Anti-King</label><br>
-    <input type="checkbox" name="thermo" id="thermo" disabled>
-      <label for="thermo">Thermo (TODO)</label><br>
-    <input type="checkbox" name="arrow" id="arrow" disabled>
-      <label for="arrow">Arrows (TODO)</label><br>
-    <input type="checkbox" name="kropki" id="kropki" disabled>
-      <label for="kropki">Kropki Dots (TODO)</label><br>
-    <input type="checkbox" name="german-whispers" id="german-whispers" disabled>
-      <label for="german-whispers">German Whispers (TODO)</label><br>
-  </div>
-  <!-- <canvas></canvas> -->
-  <div class="grid">
-    <div class="nonet">
-      <div class="box" id="b11"><input type="text" maxLength="1" class="box" id="i00"></div>
-      <div class="box" id="b21"><input type="text" maxLength="1" class="box" id="i01"></div>
-      <div class="box" id="b31"><input type="text" maxLength="1" class="box" id="i02"></div>
-      <div class="box" id="b12"><input type="text" maxLength="1" class="box" id="i10"></div>
-      <div class="box" id="b22"><input type="text" maxLength="1" class="box" id="i11"></div>
-      <div class="box" id="b32"><input type="text" maxLength="1" class="box" id="i12"></div>
-      <div class="box" id="b13"><input type="text" maxLength="1" class="box" id="i20"></div>
-      <div class="box" id="b23"><input type="text" maxLength="1" class="box" id="i21"></div>
-      <div class="box" id="b33"><input type="text" maxLength="1" class="box" id="i22"></div>
+  <div id="body">
+    <div id="constraints">
+      <h2>Constraints</h2>
+      <input type="checkbox" name="1-9horiz" id="1-9horiz" checked>
+        <label for="1-9horiz">1-9 in Horizontal</label><br>
+      <input type="checkbox" name="1-9vert" id="1-9vert" checked>
+        <label for="1-9vert">1-9 in Vertical</label><br>
+      <input type="checkbox" name="1-9nonet" id="1-9nonet" checked>
+        <label for="1-9nonet">1-9 in Nonets</label><br>
+      <input type="checkbox" name="antiknight" id="antiknight">
+        <label for="antiknight">Anti-Knight</label><br>
+      <input type="checkbox" name="antiking" id="antiking">
+        <label for="antiking">Anti-King</label><br>
+      <input type="checkbox" name="thermo" id="thermo" disabled>
+        <label for="thermo">Thermo (TODO)</label><br>
+      <input type="checkbox" name="arrow" id="arrow" disabled>
+        <label for="arrow">Arrows (TODO)</label><br>
+      <input type="checkbox" name="kropki" id="kropki" disabled>
+        <label for="kropki">Kropki Dots (TODO)</label><br>
+      <input type="checkbox" name="german-whispers" id="german-whispers" disabled>
+        <label for="german-whispers">German Whispers (TODO)</label><br>
     </div>
-    <div class="nonet">
-      <div class="box" id="b41"><input type="text" maxLength="1" class="box" id="i03"></div>
-      <div class="box" id="b51"><input type="text" maxLength="1" class="box" id="i04"></div>
-      <div class="box" id="b61"><input type="text" maxLength="1" class="box" id="i05"></div>
-      <div class="box" id="b42"><input type="text" maxLength="1" class="box" id="i13"></div>
-      <div class="box" id="b52"><input type="text" maxLength="1" class="box" id="i14"></div>
-      <div class="box" id="b62"><input type="text" maxLength="1" class="box" id="i15"></div>
-      <div class="box" id="b43"><input type="text" maxLength="1" class="box" id="i23"></div>
-      <div class="box" id="b53"><input type="text" maxLength="1" class="box" id="i24"></div>
-      <div class="box" id="b63"><input type="text" maxLength="1" class="box" id="i25"></div>
+    <!-- <canvas></canvas> -->
+    <div class="grid">
+      <div class="nonet">
+        <div class="box" id="b11"><input type="text" maxLength="1" class="box" id="i00"></div>
+        <div class="box" id="b21"><input type="text" maxLength="1" class="box" id="i01"></div>
+        <div class="box" id="b31"><input type="text" maxLength="1" class="box" id="i02"></div>
+        <div class="box" id="b12"><input type="text" maxLength="1" class="box" id="i10"></div>
+        <div class="box" id="b22"><input type="text" maxLength="1" class="box" id="i11"></div>
+        <div class="box" id="b32"><input type="text" maxLength="1" class="box" id="i12"></div>
+        <div class="box" id="b13"><input type="text" maxLength="1" class="box" id="i20"></div>
+        <div class="box" id="b23"><input type="text" maxLength="1" class="box" id="i21"></div>
+        <div class="box" id="b33"><input type="text" maxLength="1" class="box" id="i22"></div>
+      </div>
+      <div class="nonet">
+        <div class="box" id="b41"><input type="text" maxLength="1" class="box" id="i03"></div>
+        <div class="box" id="b51"><input type="text" maxLength="1" class="box" id="i04"></div>
+        <div class="box" id="b61"><input type="text" maxLength="1" class="box" id="i05"></div>
+        <div class="box" id="b42"><input type="text" maxLength="1" class="box" id="i13"></div>
+        <div class="box" id="b52"><input type="text" maxLength="1" class="box" id="i14"></div>
+        <div class="box" id="b62"><input type="text" maxLength="1" class="box" id="i15"></div>
+        <div class="box" id="b43"><input type="text" maxLength="1" class="box" id="i23"></div>
+        <div class="box" id="b53"><input type="text" maxLength="1" class="box" id="i24"></div>
+        <div class="box" id="b63"><input type="text" maxLength="1" class="box" id="i25"></div>
+      </div>
+      <div class="nonet">
+        <div class="box" id="b71"><input type="text" maxLength="1" class="box" id="i06"></div>
+        <div class="box" id="b81"><input type="text" maxLength="1" class="box" id="i07"></div>
+        <div class="box" id="b91"><input type="text" maxLength="1" class="box" id="i08"></div>
+        <div class="box" id="b72"><input type="text" maxLength="1" class="box" id="i16"></div>
+        <div class="box" id="b82"><input type="text" maxLength="1" class="box" id="i17"></div>
+        <div class="box" id="b92"><input type="text" maxLength="1" class="box" id="i18"></div>
+        <div class="box" id="b73"><input type="text" maxLength="1" class="box" id="i26"></div>
+        <div class="box" id="b83"><input type="text" maxLength="1" class="box" id="i27"></div>
+        <div class="box" id="b93"><input type="text" maxLength="1" class="box" id="i28"></div>
+      </div>
+      <div class="nonet">
+        <div class="box" id="b14"><input type="text" maxLength="1" class="box" id="i30"></div>
+        <div class="box" id="b24"><input type="text" maxLength="1" class="box" id="i31"></div>
+        <div class="box" id="b34"><input type="text" maxLength="1" class="box" id="i32"></div>
+        <div class="box" id="b15"><input type="text" maxLength="1" class="box" id="i40"></div>
+        <div class="box" id="b25"><input type="text" maxLength="1" class="box" id="i41"></div>
+        <div class="box" id="b35"><input type="text" maxLength="1" class="box" id="i42"></div>
+        <div class="box" id="b16"><input type="text" maxLength="1" class="box" id="i50"></div>
+        <div class="box" id="b26"><input type="text" maxLength="1" class="box" id="i51"></div>
+        <div class="box" id="b36"><input type="text" maxLength="1" class="box" id="i52"></div>
+      </div>
+      <div class="nonet">
+        <div class="box" id="b44"><input type="text" maxLength="1" class="box" id="i33"></div>
+        <div class="box" id="b54"><input type="text" maxLength="1" class="box" id="i34"></div>
+        <div class="box" id="b64"><input type="text" maxLength="1" class="box" id="i35"></div>
+        <div class="box" id="b45"><input type="text" maxLength="1" class="box" id="i43"></div>
+        <div class="box" id="b55"><input type="text" maxLength="1" class="box" id="i44"></div>
+        <div class="box" id="b65"><input type="text" maxLength="1" class="box" id="i45"></div>
+        <div class="box" id="b46"><input type="text" maxLength="1" class="box" id="i53"></div>
+        <div class="box" id="b56"><input type="text" maxLength="1" class="box" id="i54"></div>
+        <div class="box" id="b66"><input type="text" maxLength="1" class="box" id="i55"></div>
+      </div>
+      <div class="nonet">
+        <div class="box" id="b74"><input type="text" maxLength="1" class="box" id="i36"></div>
+        <div class="box" id="b84"><input type="text" maxLength="1" class="box" id="i37"></div>
+        <div class="box" id="b94"><input type="text" maxLength="1" class="box" id="i38"></div>
+        <div class="box" id="b75"><input type="text" maxLength="1" class="box" id="i46"></div>
+        <div class="box" id="b85"><input type="text" maxLength="1" class="box" id="i47"></div>
+        <div class="box" id="b95"><input type="text" maxLength="1" class="box" id="i48"></div>
+        <div class="box" id="b76"><input type="text" maxLength="1" class="box" id="i56"></div>
+        <div class="box" id="b86"><input type="text" maxLength="1" class="box" id="i57"></div>
+        <div class="box" id="b96"><input type="text" maxLength="1" class="box" id="i58"></div>
+      </div>
+      <div class="nonet">
+        <div class="box" id="b17"><input type="text" maxLength="1" class="box" id="i60"></div>
+        <div class="box" id="b27"><input type="text" maxLength="1" class="box" id="i61"></div>
+        <div class="box" id="b37"><input type="text" maxLength="1" class="box" id="i62"></div>
+        <div class="box" id="b18"><input type="text" maxLength="1" class="box" id="i70"></div>
+        <div class="box" id="b28"><input type="text" maxLength="1" class="box" id="i71"></div>
+        <div class="box" id="b38"><input type="text" maxLength="1" class="box" id="i72"></div>
+        <div class="box" id="b19"><input type="text" maxLength="1" class="box" id="i80"></div>
+        <div class="box" id="b29"><input type="text" maxLength="1" class="box" id="i81"></div>
+        <div class="box" id="b39"><input type="text" maxLength="1" class="box" id="i82"></div>
+      </div>
+      <div class="nonet">
+        <div class="box" id="b47"><input type="text" maxLength="1" class="box" id="i63"></div>
+        <div class="box" id="b57"><input type="text" maxLength="1" class="box" id="i64"></div>
+        <div class="box" id="b67"><input type="text" maxLength="1" class="box" id="i65"></div>
+        <div class="box" id="b48"><input type="text" maxLength="1" class="box" id="i73"></div>
+        <div class="box" id="b58"><input type="text" maxLength="1" class="box" id="i74"></div>
+        <div class="box" id="b68"><input type="text" maxLength="1" class="box" id="i75"></div>
+        <div class="box" id="b49"><input type="text" maxLength="1" class="box" id="i83"></div>
+        <div class="box" id="b59"><input type="text" maxLength="1" class="box" id="i84"></div>
+        <div class="box" id="b69"><input type="text" maxLength="1" class="box" id="i85"></div>
+      </div>
+      <div class="nonet">
+        <div class="box" id="b77"><input type="text" maxLength="1" class="box" id="i66"></div>
+        <div class="box" id="b87"><input type="text" maxLength="1" class="box" id="i67"></div>
+        <div class="box" id="b97"><input type="text" maxLength="1" class="box" id="i68"></div>
+        <div class="box" id="b78"><input type="text" maxLength="1" class="box" id="i76"></div>
+        <div class="box" id="b88"><input type="text" maxLength="1" class="box" id="i77"></div>
+        <div class="box" id="b98"><input type="text" maxLength="1" class="box" id="i78"></div>
+        <div class="box" id="b79"><input type="text" maxLength="1" class="box" id="i86"></div>
+        <div class="box" id="b89"><input type="text" maxLength="1" class="box" id="i87"></div>
+        <div class="box" id="b99"><input type="text" maxLength="1" class="box" id="i88"></div>
+      </div>
+      <button id="run">Solve</button>
     </div>
-    <div class="nonet">
-      <div class="box" id="b71"><input type="text" maxLength="1" class="box" id="i06"></div>
-      <div class="box" id="b81"><input type="text" maxLength="1" class="box" id="i07"></div>
-      <div class="box" id="b91"><input type="text" maxLength="1" class="box" id="i08"></div>
-      <div class="box" id="b72"><input type="text" maxLength="1" class="box" id="i16"></div>
-      <div class="box" id="b82"><input type="text" maxLength="1" class="box" id="i17"></div>
-      <div class="box" id="b92"><input type="text" maxLength="1" class="box" id="i18"></div>
-      <div class="box" id="b73"><input type="text" maxLength="1" class="box" id="i26"></div>
-      <div class="box" id="b83"><input type="text" maxLength="1" class="box" id="i27"></div>
-      <div class="box" id="b93"><input type="text" maxLength="1" class="box" id="i28"></div>
-    </div>
-    <div class="nonet">
-      <div class="box" id="b14"><input type="text" maxLength="1" class="box" id="i30"></div>
-      <div class="box" id="b24"><input type="text" maxLength="1" class="box" id="i31"></div>
-      <div class="box" id="b34"><input type="text" maxLength="1" class="box" id="i32"></div>
-      <div class="box" id="b15"><input type="text" maxLength="1" class="box" id="i40"></div>
-      <div class="box" id="b25"><input type="text" maxLength="1" class="box" id="i41"></div>
-      <div class="box" id="b35"><input type="text" maxLength="1" class="box" id="i42"></div>
-      <div class="box" id="b16"><input type="text" maxLength="1" class="box" id="i50"></div>
-      <div class="box" id="b26"><input type="text" maxLength="1" class="box" id="i51"></div>
-      <div class="box" id="b36"><input type="text" maxLength="1" class="box" id="i52"></div>
-    </div>
-    <div class="nonet">
-      <div class="box" id="b44"><input type="text" maxLength="1" class="box" id="i33"></div>
-      <div class="box" id="b54"><input type="text" maxLength="1" class="box" id="i34"></div>
-      <div class="box" id="b64"><input type="text" maxLength="1" class="box" id="i35"></div>
-      <div class="box" id="b45"><input type="text" maxLength="1" class="box" id="i43"></div>
-      <div class="box" id="b55"><input type="text" maxLength="1" class="box" id="i44"></div>
-      <div class="box" id="b65"><input type="text" maxLength="1" class="box" id="i45"></div>
-      <div class="box" id="b46"><input type="text" maxLength="1" class="box" id="i53"></div>
-      <div class="box" id="b56"><input type="text" maxLength="1" class="box" id="i54"></div>
-      <div class="box" id="b66"><input type="text" maxLength="1" class="box" id="i55"></div>
-    </div>
-    <div class="nonet">
-      <div class="box" id="b74"><input type="text" maxLength="1" class="box" id="i36"></div>
-      <div class="box" id="b84"><input type="text" maxLength="1" class="box" id="i37"></div>
-      <div class="box" id="b94"><input type="text" maxLength="1" class="box" id="i38"></div>
-      <div class="box" id="b75"><input type="text" maxLength="1" class="box" id="i46"></div>
-      <div class="box" id="b85"><input type="text" maxLength="1" class="box" id="i47"></div>
-      <div class="box" id="b95"><input type="text" maxLength="1" class="box" id="i48"></div>
-      <div class="box" id="b76"><input type="text" maxLength="1" class="box" id="i56"></div>
-      <div class="box" id="b86"><input type="text" maxLength="1" class="box" id="i57"></div>
-      <div class="box" id="b96"><input type="text" maxLength="1" class="box" id="i58"></div>
-    </div>
-    <div class="nonet">
-      <div class="box" id="b17"><input type="text" maxLength="1" class="box" id="i60"></div>
-      <div class="box" id="b27"><input type="text" maxLength="1" class="box" id="i61"></div>
-      <div class="box" id="b37"><input type="text" maxLength="1" class="box" id="i62"></div>
-      <div class="box" id="b18"><input type="text" maxLength="1" class="box" id="i70"></div>
-      <div class="box" id="b28"><input type="text" maxLength="1" class="box" id="i71"></div>
-      <div class="box" id="b38"><input type="text" maxLength="1" class="box" id="i72"></div>
-      <div class="box" id="b19"><input type="text" maxLength="1" class="box" id="i80"></div>
-      <div class="box" id="b29"><input type="text" maxLength="1" class="box" id="i81"></div>
-      <div class="box" id="b39"><input type="text" maxLength="1" class="box" id="i82"></div>
-    </div>
-    <div class="nonet">
-      <div class="box" id="b47"><input type="text" maxLength="1" class="box" id="i63"></div>
-      <div class="box" id="b57"><input type="text" maxLength="1" class="box" id="i64"></div>
-      <div class="box" id="b67"><input type="text" maxLength="1" class="box" id="i65"></div>
-      <div class="box" id="b48"><input type="text" maxLength="1" class="box" id="i73"></div>
-      <div class="box" id="b58"><input type="text" maxLength="1" class="box" id="i74"></div>
-      <div class="box" id="b68"><input type="text" maxLength="1" class="box" id="i75"></div>
-      <div class="box" id="b49"><input type="text" maxLength="1" class="box" id="i83"></div>
-      <div class="box" id="b59"><input type="text" maxLength="1" class="box" id="i84"></div>
-      <div class="box" id="b69"><input type="text" maxLength="1" class="box" id="i85"></div>
-    </div>
-    <div class="nonet">
-      <div class="box" id="b77"><input type="text" maxLength="1" class="box" id="i66"></div>
-      <div class="box" id="b87"><input type="text" maxLength="1" class="box" id="i67"></div>
-      <div class="box" id="b97"><input type="text" maxLength="1" class="box" id="i68"></div>
-      <div class="box" id="b78"><input type="text" maxLength="1" class="box" id="i76"></div>
-      <div class="box" id="b88"><input type="text" maxLength="1" class="box" id="i77"></div>
-      <div class="box" id="b98"><input type="text" maxLength="1" class="box" id="i78"></div>
-      <div class="box" id="b79"><input type="text" maxLength="1" class="box" id="i86"></div>
-      <div class="box" id="b89"><input type="text" maxLength="1" class="box" id="i87"></div>
-      <div class="box" id="b99"><input type="text" maxLength="1" class="box" id="i88"></div>
-    </div>
-    <button id="run">Solve</button>
-  </div>
-  <div id="place-constraints">
-    <h2>Input method</h2>
-    <!-- This will have many radio buttons for placing the different constraints. Can disable ones that aren't enabled -->
-    <input type="radio" name="input-type" id="input-numbers" checked>
-      <label for="input-numbers">Given Digits</label><br>
-    <input type="radio" name="input-type" id="input-thermo">
-      <label for="input-thermo">Thermo</label><br>
-    
-    <input type="radio" name="input-type" id="input-arrow">
-      <label for="input-arrow">Arrow</label><br>
+    <div id="place-constraints">
+      <h2>Input method</h2>
+      <!-- This will have many radio buttons for placing the different constraints. Can disable ones that aren't enabled -->
+      <input type="radio" name="input-type" id="input-numbers" checked>
+        <label for="input-numbers">Given Digits</label><br>
+      <input type="radio" name="input-type" id="input-thermo">
+        <label for="input-thermo">Thermo</label><br>
+      
+      <input type="radio" name="input-type" id="input-arrow">
+        <label for="input-arrow">Arrow</label><br>
 
-    <input type="radio" name="input-type" id="input-kropki">
-      <label for="input-kropki">Kropki</label><br>
-    
-    <input type="radio" name="input-type" id="input-german">
-      <label for="input-german">German Whispers</label><br>
+      <input type="radio" name="input-type" id="input-kropki">
+        <label for="input-kropki">Kropki</label><br>
+      
+      <input type="radio" name="input-type" id="input-german">
+        <label for="input-german">German Whispers</label><br>
+    </div>
   </div>
 </body>
 </html>
