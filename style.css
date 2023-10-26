@@ -1,7 +1,21 @@
+#header {
+  width: 100%;
+  height: 10%;
+  border: 2px solid black;
+  text-align: center;
+  vertical-align: middle;
+
+  top: 0;
+  right: 0;
+  left: 0;
+  position: fixed;
+}
+
 #body {
   display: flex;
   justify-content: space-around;
   width: 100%;
+  margin-top: 10%;
 }
 
 .grid {
