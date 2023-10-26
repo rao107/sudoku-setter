@@ -15,24 +15,30 @@
   display: flex;
   justify-content: space-around;
   width: 100%;
-  margin-top: 10%;
+  margin-top: 12%;
 }
 
 .grid {
   display: grid;
-  /* border: solid black 10px; */
-  grid-template-columns: min-content min-content min-content;
+  grid-template-columns: auto auto auto;
 }
 
 .nonet {
   display: grid;
-  grid-template-columns: min-content min-content min-content;
-  border-style: solid;
+  grid-template-columns: auto auto auto;
+  background-color: rgb(35, 35, 35);
+  padding: 5px;
+  width: 150px;
+  height: 150px;
 }
 
 .box {
-  width: 55px;
-  height: 55px;
+  width: 94%;
+  height: 94%;
   text-align: center;
   font-size: 2rem;
+}
+
+#run {
+  margin-top: 10%;
 }
