@@ -1,4 +1,4 @@
-
+import {validateJSON, expectNumbersWithin} from "./validate";
 /** Handles setting up some event listeners for elements */
 export function init() {
   // Click events
@@ -60,7 +60,10 @@ export function init() {
 
 }
 
-/** Stops inputs from acting like inputs. It will be useful for selecting tiles for placing constraints */
+/** 
+ * Stops inputs from acting like inputs. 
+ * It will be useful for selecting tiles for placing constraints 
+ */
 export function lockAllInputs() {
   inputGrid.forEach(c=>c.forEach(e=>e.readOnly = true));
 }
@@ -77,13 +80,38 @@ export function showLoadingScreen() {
 /**Re-enables inputs after Z3 returns */
 export function hideLoadingScreen() {
   let loading = document.getElementById("loading");
-  if (loading === null) return;
+  if (loading === null) return
   loading.style.display = 'none';
 }
 
 /** Used for tracking for placing constraints */
 export let lastClicked:HTMLInputElement | null = null
 
+/** Used for tracking the state ofthe currently placing constraint */
+let currentConstraint: [number, number][] = [];
+
+/** Tracks constraints that have saved memory */
+export let savedConstraints:{
+  thermo:[number,number][][],
+  arrow:[number,number][][],
+  kropkiAdjacent:[number,number][][],
+  kropkiDouble:[number,number][][],
+  germanWhispers:[number,number][][]
+} = {
+  thermo:[],
+  arrow:[],
+  kropkiAdjacent:[],
+  kropkiDouble:[],
+  germanWhispers:[]
+}
+
+export function clearSavedConstraints(){
+  savedConstraints.thermo = [];
+  savedConstraints.arrow = [];
+  savedConstraints.kropkiAdjacent = [];
+  savedConstraints.kropkiDouble = [];
+  savedConstraints.germanWhispers = [];
+}
 // This will include the event listeners for highlighting and such
 
 /** Changes the color of all "seen" tiles from the currently clicked on one */
@@ -115,27 +143,31 @@ export function getConstraints():string[]{
 }
 
 function importFromFile(json:any) {
-  // TODO
   // Validate object
+  clearSavedConstraints();
   console.log(json);
   // These are the only required parts
-  if(json["given"] === undefined ||!Array.isArray(json.given) || json.given.length !== 9) {
-    console.error("Imported JSON needs to have a 'given' property that is a 2d array of numbers between 0-9, length 9x9")
-    return;
-  }
-  // Check inner arrays
-  for(let row = 0; row < 9; row++) {
-    let r = json.given[row];
-    if (r === undefined || !Array.isArray(r) || r.length !== 9) {
-      console.error("'given' property needs to be a 2d array of numbers, length 9x9");
+  // Could format this better, but it gets the point across
+  if(validateJSON(json["given"], [
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0]]))
+  {
+    // Format fits, so check values
+    if(!expectNumbersWithin(json.given, 0,9)) {
+      console.error("Values in 'given' field need to be between 0-9");
       return;
     }
-    for(let col = 0; col < 9; col++) {
-      if (typeof r[col] !== 'number' || r[col] < 0 || r[col] > 9) {
-        console.error("'given' property needs to be a 2d array of numbers between 0-9, length 9x9");
-        return;
-      }
-    }
+  } else {
+    console.error("File needs a 'given' propert that is "+
+      "a 2d array length 9x9 of numbers between 0-9")
+    return
   }
   // Set input values
   for(let row = 0; row < 9; row++) {
@@ -143,9 +175,64 @@ function importFromFile(json:any) {
       inputGrid[row][col].value = (json.given[row][col] === 0) ? "" : json.given[row][col];
     }
   }
-  // Check other parts
-  // TODO
+  // Check boolean based constraints
+  ["1-9vert", "1-9horiz", "1-9nonet", "antiknight", "antiking"].forEach(con => {
+    let elem = <HTMLInputElement>document.getElementById(con);
+    if(elem === null) return;
+    if(json[con] !== undefined && typeof json[con] !== 'boolean') {
+      console.warn("Invalid type for constraint "+con);
+    }
+    elem.checked = (json[con] !== undefined && json[con] === true);
+  });
 
-  console.warn("TODO: importing JSON other parts");
-  // Resolve values
+  // Lots of annoying JSON data validation below
+  //  It was not fun to write, but should do the job
+
+  ["thermo", "arrow", "germanWhispers"].forEach(con => {
+    // Check more complex constraints
+    if (json[con] !== undefined) {
+      // Has constraint, so check format
+      if (validateJSON(json[con], [[[0,0]]])) {        
+        // Check for values between 0-8
+        if(!expectNumbersWithin(json[con], 0, 8)) {
+          console.warn(`Indicies for ${con} must be between 0-8`);
+        } else {
+          // TODO: Check for adjacency of values before accepting them
+
+          // TS doesn't like this cause it can't be sure
+          //  that the properties line up. Its fine, I'm sure
+          //@ts-ignore
+          savedConstraints[con] = json[con];
+        }
+      } else {
+        console.warn("Invalid format for "+con);
+      }
+    } else {
+      console.log("Did not have constraint " + con);
+    }
+  });
+  ["kropkiAdjacent", "kropkiDouble"].forEach(kropki => {
+    // Check more complex constraints
+    if (json[kropki] !== undefined) {
+      // Has constraint, so check format
+      if (validateJSON(json[kropki], [[[0,0],[0,0]]] )) {        
+        // Check for values between 0-8
+        if(!expectNumbersWithin(json[kropki], 0, 8)) {
+          console.warn(`Indicies for ${kropki} must be between 0-8`);
+        } else {
+          // TODO: Check for adjacency of values before accepting them
+
+          // TS doesn't like this cause it can't be sure
+          //  that the properties line up. Its fine, I'm sure
+          //@ts-ignore
+          savedConstraints[kropki] = json[kropki];
+        }
+      } else {
+        console.warn("Invalid format for "+kropki);
+      }
+    } else {
+      console.log("Did not have constraint " + kropki);
+    }
+  });
+  console.log(savedConstraints);
 }

@@ -4,7 +4,8 @@ import {
   getConstraints, 
   init, 
   showLoadingScreen, 
-  hideLoadingScreen
+  hideLoadingScreen,
+  savedConstraints,
 } from './setup';
 
 declare global {
@@ -110,6 +111,45 @@ if (runBtn === undefined || runBtn === null) {
           });
         }
       }
+    }
+
+    // thermo
+    if (constraints.includes("thermo")) {
+      // TODO
+      savedConstraints.thermo.forEach(thermo => {
+        // Each thermo is a list of [x,y] pairs
+        // First one should be the bulb
+        
+      });
+    }
+
+    // arrow
+    if (constraints.includes("arrow")) {
+      // TODO
+      savedConstraints.arrow.forEach(arrow => {
+        // Each arrow is a list of [x,y] pairs
+
+      })
+    }
+
+    // kropki
+    if (constraints.includes("kropki")) {
+      // TODO
+      savedConstraints.kropkiAdjacent.forEach(kka => {
+        // Each kropki is [[x1,y1], [x2,y2]]
+
+      })
+      savedConstraints.kropkiDouble.forEach(kkd => {
+        // Each kropki is [[x1,y1], [x2,y2]]
+
+      })
+    }
+
+    // german whispers
+    if (constraints.includes("germanWhispers")) {
+      savedConstraints.germanWhispers.forEach(whisper => {
+        // Each whisper is [x,y] array
+      })
     }
 
     if (await solver.check() === "sat") {

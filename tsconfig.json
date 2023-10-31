@@ -1,5 +1,5 @@
 {
-    "include": ["index.ts", "setup.ts"],
+    "include": ["index.ts", "setup.ts", "validate.ts"],
     "compilerOptions": {
         "target": "es2019",
         "module": "commonjs",
