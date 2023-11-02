@@ -186,3 +186,31 @@ function gridToString(grid:number[][]) {
     return acc + `\n${cur}${(idx === 2 || idx === 5) ? "\n-----------":""}`;
   }, "");
 }
+
+/** Creates an object for use in the `downloadObjectAsJSON()` function */
+function constructSaveObject():object {
+  let given = getGrid()
+    .map(row => row.map(c => c ? c : 0));
+  let bConstraints = getConstraints();
+  let out: {[name:string]:any} = { given, ...savedConstraints };
+  // Gather boolean constraints
+  bConstraints.forEach(con => {
+    out[con] = true;
+  });
+  return out;
+}
+
+/** Can be used to allow saving  */
+function downloadObjectAsJson(exportObj:object, exportName:string){
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href",     dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+
+document.getElementById("save")?.addEventListener('click', event => {
+  downloadObjectAsJson(constructSaveObject(), 'sudoku-export');
+})

@@ -7,6 +7,9 @@ export function init() {
       // Add the onclick events
       document.getElementById(`i${y}${x}`)?.addEventListener('click', event => {
         let target = <HTMLInputElement>event.target;
+        // Get indicies from id
+        let x = parseInt(target.id[1]);
+        let y = parseInt(target.id[2]);
         console.log(`Clicked ${x},${y}`);
       });
     }
@@ -20,6 +23,8 @@ export function init() {
         inputGrid[y][x].value = "";
       }
     }
+    clearSavedConstraints();
+    drawCanvas();
   })
   // File input
   document.getElementById("import")?.addEventListener('change', event => {
@@ -57,7 +62,175 @@ export function init() {
       lockAllInputs();
     })
   })
+  drawCanvas();
+}
 
+const canvasSize = 150*3;
+const tileSize = Math.floor(canvasSize/9);
+
+export function drawCanvas() {
+  let canvas = <HTMLCanvasElement>document.getElementById("canvas");
+  canvas.width = canvasSize;
+  canvas.height = canvasSize;
+  let ctx = canvas.getContext('2d');
+  
+  if (ctx === null) return;
+  ctx.clearRect(0,0,canvasSize,canvasSize);
+  // Draw border
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 5;
+  ctx.strokeRect(1,1,canvasSize-1,canvasSize-1);
+
+  // Draw lines for nonets and tiles
+  for(let i = 1; i < 9; i++) {
+    ctx.beginPath();
+    ctx.lineWidth = (i % 3 === 0) ? 5: 2;
+    // Vertical line
+    ctx.moveTo(tileSize * i, 0);
+    ctx.lineTo(tileSize * i, canvasSize);
+    // Horizontal line
+    ctx.moveTo(0, tileSize * i);
+    ctx.lineTo(canvasSize, tileSize * i);
+    ctx.stroke();
+  }
+
+  savedConstraints.thermo.forEach(thermo => {
+    // Draw thermos
+    if(ctx === null) return;
+    let [bulbx,bulby] = thermo[0];
+    // Draw bulb
+    circleAtTile(ctx, true, bulbx, bulby, 0.8, 'gray');
+    // Draw lines
+    for(let i = 0; i < thermo.length - 1; i++) {
+      ctx.lineCap = "round";
+      lineBetweenTiles(ctx, 
+        thermo[i][0], thermo[i][1], 
+        thermo[i + 1][0], thermo[i + 1][1], 
+        15, 'gray');
+    }
+  });
+  savedConstraints.arrow.forEach(arrow => {
+    // Draw thermos
+    if(ctx === null) return;
+    const color = '#a0a0a0';
+    const width = 4;
+    let [arrX,arrY] = arrow[0];
+    circleAtTile(ctx, false, arrX, arrY, 0.8, color, width);
+    // Draw from outer radius to center of second tile
+    lineBetweenTiles(ctx, 
+      ...movePointInDir(arrow[0][0], arrow[0][1],arrow[1][0], arrow[1][1], 0.4), 
+      arrow[1][0], arrow[1][1], 
+      width, color);
+    for(let i = 1; i < arrow.length - 1; i++) {
+      ctx.lineCap = "round";
+      lineBetweenTiles(ctx, 
+        arrow[i][0], arrow[i][1], 
+        arrow[i + 1][0], arrow[i + 1][1], 
+        width, color
+      );
+    }
+    // They are forced to be at least 2 elements, so this is okay
+    let [secondLastX, secondLastY] = arrow[arrow.length - 2];
+    let [lastX, lastY] = arrow[arrow.length - 1];
+    let dx = lastX - secondLastX;
+    let dy = lastY - secondLastY;
+    // Angle is flipped a way we don't want so I change it
+    let angle = Math.PI + Math.atan2(dy, dx);
+    // Draw two small lines from end point based on angle
+    ctx.lineCap = 'round';
+    lineBetweenTiles(ctx,
+      lastX, lastY, 
+      ...movePointByAngle(lastX, lastY, angle + Math.PI/4, 0.3),
+      width, color
+    );
+    lineBetweenTiles(ctx,
+      lastX, lastY, 
+      ...movePointByAngle(lastX, lastY, angle - Math.PI/4, 0.3),
+      width, color
+    );
+
+  });
+  savedConstraints.germanWhispers.forEach(whisper => {
+    if(ctx === null) return;
+    for(let i = 0; i < whisper.length - 1; i++) {
+      lineBetweenTiles(ctx, 
+        whisper[i][0], whisper[i][1], 
+        whisper[i + 1][0], whisper[i + 1][1], 
+        8, 'green');
+    }
+  });
+  savedConstraints.kropkiDouble.forEach(kropki => {
+    if(ctx === null) return;
+    let [x1, y1] = kropki[0];
+    let [x2, y2] = kropki[1];
+    // Average two points should give where dot should go
+    let nx = (x1 + x2) / 2;
+    let ny = (y1 + y2) / 2;
+    circleAtTile(ctx, true, nx, ny, 0.3, 'black');
+  });
+  savedConstraints.kropkiAdjacent.forEach(kropki => {
+    if(ctx === null) return;
+    let [x1, y1] = kropki[0];
+    let [x2, y2] = kropki[1];
+    // Average two points should give where dot should go
+    let nx = (x1 + x2) / 2;
+    let ny = (y1 + y2) / 2;
+    // First draw white under, then black outline
+    circleAtTile(ctx, true, nx, ny, 0.3, 'white');
+    circleAtTile(ctx, false, nx, ny, 0.3, 'black', 2);
+  });
+}
+
+/** Draws a circle at a tile with a specified radius of 0-1 percentage of a tile */
+function circleAtTile(ctx:CanvasRenderingContext2D, fill:boolean, tileX:number, tileY:number, radius:number, color:string, lineWidth=5) {
+  ctx.beginPath();
+  ctx.arc(tileX * tileSize + tileSize/2, 
+    tileY * tileSize + tileSize/2, 
+    (tileSize * radius)/2, 0, Math.PI * 2);
+  if(fill) {
+    ctx.fillStyle = color;
+    // this closes the path
+    ctx.fill();
+  } else {
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = color;
+    // this closes the path
+    ctx.stroke();
+  }
+}
+
+/** Draws a line between two specified tile points */
+function lineBetweenTiles(ctx:CanvasRenderingContext2D, x1:number, y1:number, x2:number, y2:number, width:number, color:string) {
+  ctx.beginPath();
+  ctx.lineWidth = width;
+  ctx.strokeStyle = color;
+  ctx.moveTo(x1 * tileSize + tileSize/2, y1 * tileSize + tileSize/2);
+  ctx.lineTo(x2 * tileSize + tileSize/2, y2 * tileSize + tileSize/2);
+  // This closes the path
+  ctx.stroke();
+}
+
+/** 
+ * Moves one point towards another by a static amount.
+ * Used for drawing arrow lines
+ */
+function movePointInDir(fromX:number, fromY:number, destX:number, destY:number, dist:number):[number, number] {
+  // let dx = clamp(destX - fromX, -1, 1);
+  // let dy = clamp(destY - fromY, -1, 1);
+  let angle = (Math.PI/2)-Math.atan2(destX - fromX, destY - fromY);
+  // dx and dy = -1, 0, or 1
+  return [
+    fromX + Math.cos(angle) * dist,
+    fromY + Math.sin(angle) * dist
+  ];
+}
+
+/** Pushes a point along a angle by a distance */
+function movePointByAngle(fromX:number, fromY:number, angleRad:number, dist:number):[number, number] {
+  return [
+    fromX + Math.cos(angleRad) * dist,
+    fromY + Math.sin(angleRad) * dist
+  ];
 }
 
 /** 
@@ -188,51 +361,110 @@ function importFromFile(json:any) {
   // Lots of annoying JSON data validation below
   //  It was not fun to write, but should do the job
 
+  // Check more complex constraints
   ["thermo", "arrow", "germanWhispers"].forEach(con => {
-    // Check more complex constraints
-    if (json[con] !== undefined) {
-      // Has constraint, so check format
-      if (validateJSON(json[con], [[[0,0]]])) {        
-        // Check for values between 0-8
-        if(!expectNumbersWithin(json[con], 0, 8)) {
-          console.warn(`Indicies for ${con} must be between 0-8`);
-        } else {
-          // TODO: Check for adjacency of values before accepting them
-
-          // TS doesn't like this cause it can't be sure
-          //  that the properties line up. Its fine, I'm sure
-          //@ts-ignore
-          savedConstraints[con] = json[con];
-        }
-      } else {
-        console.warn("Invalid format for "+con);
-      }
-    } else {
+    // Check for constraint
+    if (json[con] === undefined) {
       console.log("Did not have constraint " + con);
+      return;
     }
+    // Has constraint, so check format
+    if (!validateJSON(json[con], [[[0,0]]])) { 
+      console.warn("Invalid format for "+con);
+      return;
+    }
+    // Check for values between 0-8
+    if(!expectNumbersWithin(json[con], 0, 8)) {
+      console.warn(`Indicies for ${con} must be between 0-8`);
+      return;
+    }
+    // Make sure all points are adjacent
+    if(!requireAdjacentPoints(json[con], true)) {
+      console.warn(`Points for ${con} need to be adjacent`);
+      return;
+    }
+    // Require length >= 2
+    for(let i = 0; i < json[con].length; i++) {
+      if(json[con][i].length < 2) {
+        console.warn(`Constraints for ${con} must have at least two points`);
+        return;
+      }
+    }
+    // TS doesn't like this cause it can't be sure
+    //  that the properties line up. Its fine, I'm sure
+    //@ts-ignore
+    savedConstraints[con] = json[con];
   });
   ["kropkiAdjacent", "kropkiDouble"].forEach(kropki => {
     // Check more complex constraints
-    if (json[kropki] !== undefined) {
-      // Has constraint, so check format
-      if (validateJSON(json[kropki], [[[0,0],[0,0]]] )) {        
-        // Check for values between 0-8
-        if(!expectNumbersWithin(json[kropki], 0, 8)) {
-          console.warn(`Indicies for ${kropki} must be between 0-8`);
-        } else {
-          // TODO: Check for adjacency of values before accepting them
-
-          // TS doesn't like this cause it can't be sure
-          //  that the properties line up. Its fine, I'm sure
-          //@ts-ignore
-          savedConstraints[kropki] = json[kropki];
-        }
-      } else {
-        console.warn("Invalid format for "+kropki);
-      }
-    } else {
+    if (json[kropki] === undefined) {
       console.log("Did not have constraint " + kropki);
+      return;
     }
+    // Has constraint, so check format
+    if (!validateJSON(json[kropki], [[[0,0],[0,0]]] )) { 
+      console.warn("Invalid format for "+kropki);
+      return;
+    }       
+    // Check for values between 0-8
+    if(!expectNumbersWithin(json[kropki], 0, 8)) {
+      console.warn(`Indicies for ${kropki} must be between 0-8`);
+      return;
+    }
+    // Check for adjacency of values before accepting them
+    if(!requireAdjacentPoints(json[kropki], false)) {
+      console.warn(`Points within ${kropki} need to be adjacent`);
+      return
+    } 
+    // TS doesn't like this cause it can't be sure
+    //  that the properties line up. Its fine, I'm sure
+    //@ts-ignore
+    savedConstraints[kropki] = json[kropki];
   });
   console.log(savedConstraints);
+  // Update visuals
+  drawCanvas();
+}
+
+/** 
+ * Tells if all points within the array are adjacent to the next element 
+ *  Can specify if diagonals are allowed
+ */
+function requireAdjacentPoints(input:[number,number][][], allowDiagonals:boolean): boolean {
+  for(let s = 0; s < input.length; s++) {
+    let set = input[s];
+    for(let i = 0; i < set.length - 1; i++) {
+      let [x1, y1] = set[i];
+      let [x2, y2] = set[i + 1];
+      if(!areAdjacent(x1, y1, x2, y2, allowDiagonals))
+        return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Tells if two points are adjacent, with the option 
+ *  of allowing diagonals to be accepted 
+ */
+function areAdjacent(x1:number, y1:number, x2:number,y2:number, allowDiagonals:boolean):boolean {
+  if (x1 === x2) {
+    // In same column
+    // Deny same point
+    if(y1 === y2) return false;
+    // Allow only ones that are one spot over
+    return (y1 === y2 - 1 || y1 === y2 + 1);
+  } else if(y1 === y2) {
+    // Same row
+    return (x1 === x2 - 1 || x1 === x2 + 1);
+  } else {
+    if(allowDiagonals) {
+      // Accept if both are off by 1
+      if (Math.abs(x1 - x2) !== 1) return false;
+      if (Math.abs(y1 - y2) !== 1) return false;
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
