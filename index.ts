@@ -6,6 +6,7 @@ import {
   showLoadingScreen, 
   hideLoadingScreen,
   savedConstraints,
+  importFromFile,
 } from './setup';
 
 declare global {
@@ -187,8 +188,22 @@ function gridToString(grid:number[][]) {
   }, "");
 }
 
+type SaveObject ={
+  given:number[][],
+  thermo:[number,number][][],
+  arrow:[number,number][][],
+  kropkiDouble:[[number,number],[number,number]][]
+  kropkiAdjacent:[[number,number],[number,number]][]
+  germanWhispers:[number,number][][],
+  "1-9horiz":boolean | undefined,
+  "1-9vert":boolean | undefined,
+  "1-9nonet":boolean | undefined,
+  antiknight: boolean | undefined,
+  antiking: boolean | undefined
+}
+
 /** Creates an object for use in the `downloadObjectAsJSON()` function */
-function constructSaveObject():object {
+function buildSaveObject():SaveObject {
   let given = getGrid()
     .map(row => row.map(c => c ? c : 0));
   let bConstraints = getConstraints();
@@ -197,6 +212,8 @@ function constructSaveObject():object {
   bConstraints.forEach(con => {
     out[con] = true;
   });
+  // TS isn't sure that the values are set
+  //@ts-ignore
   return out;
 }
 
@@ -212,5 +229,46 @@ function downloadObjectAsJson(exportObj:object, exportName:string){
 }
 
 document.getElementById("save")?.addEventListener('click', event => {
-  downloadObjectAsJson(constructSaveObject(), 'sudoku-export');
+  downloadObjectAsJson(buildSaveObject(), 'sudoku-export');
+})
+
+function saveToLocalStorage() {
+  localStorage.setItem("saved-sudoku",
+    JSON.stringify(buildSaveObject()));
+}
+
+function loadFromLocalStorage() {
+  let item = localStorage.getItem('saved-sudoku');
+  if(item === null) {
+    console.log("Had no localStorage data");
+    return;
+  }
+  try {
+    let json: SaveObject = JSON.parse(item)
+    importFromFile(json);
+    console.log("Loaded from localStorage")
+  } catch (e) {
+    // Data was bad, so just get rid of it
+    localStorage.removeItem("saved-sudoku");
+    console.error("Could not load JSON from localStorage")
+  }
+}
+
+addEventListener('beforeunload', event => {
+  // For some reason, this is very hot or miss
+  console.log("save");
+  saveToLocalStorage();
+  // Save current state
+});
+
+addEventListener('keypress', event => {
+  if (event.key === "s") {
+    saveToLocalStorage();
+  }
+})
+
+
+addEventListener('load', event => {
+  console.log("Load");
+  loadFromLocalStorage();
 })

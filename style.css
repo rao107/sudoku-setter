@@ -40,6 +40,9 @@
   text-align: center;
   font-size: 2rem;
 }
+.highlight {
+  background-color: rgba(4, 183, 207, 0.3);
+}
 
 #run {
   margin-top: 10%;

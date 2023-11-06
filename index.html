@@ -40,14 +40,6 @@
         <label for="antiknight">Anti-Knight</label><br>
       <input type="checkbox" name="antiking" id="antiking">
         <label for="antiking">Anti-King</label><br>
-      <input type="checkbox" name="thermo" id="thermo" disabled>
-        <label for="thermo">Thermo (TODO)</label><br>
-      <input type="checkbox" name="arrow" id="arrow" disabled>
-        <label for="arrow">Arrows (TODO)</label><br>
-      <input type="checkbox" name="kropki" id="kropki" disabled>
-        <label for="kropki">Kropki Dots (TODO)</label><br>
-      <input type="checkbox" name="german-whispers" id="german-whispers" disabled>
-        <label for="german-whispers">German Whispers (TODO)</label><br>
     </div>
     <div id="canvas-grid">
       <canvas id="canvas"></canvas>
@@ -167,31 +159,31 @@
           Buttons will toggle viewing different menu for stopping 
           id's will be split by - and then used to select the input
         -->
-        <button class="select-controls" id="input-thermo">Create Thermo</button><br>
-        <button class="select-controls" id="input-arrow">Create Arrow</button><br>
-        <button class="select-controls" id="input-kropkiAdj">Create Adjacent Kropki</button><br>
-        <button class="select-controls" id="input-kropkiDouble">Create Double Kropki</button><br>
-        <button class="select-controls" id="input-germanWhispers">Create German Whisper</button>
+        <button class="select-controls" id="input-thermo">Create <u>T</u>hermo</button><br>
+        <button class="select-controls" id="input-arrow">Create <u>A</u>rrow</button><br>
+        <button class="select-controls" id="input-kropkiAdjacent">Create Ad<u>j</u>acent Kropki</button><br>
+        <button class="select-controls" id="input-kropkiDouble">Create <u>D</u>ouble Kropki</button><br>
+        <button class="select-controls" id="input-germanWhispers">Create <u>G</u>erman Whisper</button>
       </div>
       <div class="controls" id="thermo-controls" hidden>
-        TODO
-        <button>Finish Thermo</button>
+        <h3>Placing Thermo</h3>
+        <button class="finish-input">Finish Thermo</button>
       </div>
       <div class="controls" id="arrow-controls" hidden>
-        TODO
-        <button>Finish Arrow</button>
+        <h3>Placing Arrow</h3>
+        <button class="finish-input">Finish Arrow</button>
       </div>
-      <div class="controls" id="kropkiAdj-controls" hidden>
-        TODO
-        <button>Cancel</button>
+      <div class="controls" id="kropkiAdjacent-controls" hidden>
+        <h3>Placing Adjacent Kropki</h3>
+        <button class="finish-input">Done</button>
       </div>
       <div class="controls" id="kropkiDouble-controls" hidden>
-        TODO
-        <button>Cancel</button>
+        <h3>Placing Double Kropki</h3>
+        <button class="finish-input">Done</button>
       </div>
       <div class="controls" id="germanWhispers-controls" hidden>
-        TODO
-        <button>Finish Thermo</button>
+        <h3>Placing German Whisper</h3>
+        <button class="finish-input">Finish German Whisper</button>
       </div>
     </div>
   </div>

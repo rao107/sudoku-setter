@@ -5,27 +5,140 @@ export function init() {
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
       // Add the onclick events
-      document.getElementById(`i${y}${x}`)?.addEventListener('click', event => {
+      document.getElementById(`i${x}${y}`)?.addEventListener('click', event => {
         let target = <HTMLInputElement>event.target;
         // Get indicies from id
-        let x = parseInt(target.id[1]);
-        let y = parseInt(target.id[2]);
-        console.log(`Clicked ${x},${y}`);
+        // They are in rowcol format
+        let x = parseInt(target.id[2]);
+        let y = parseInt(target.id[1]);
+        // console.log(`Clicked ${x},${y}`);
+        if(currentConstraintType === 'none') {
+          removeAllHighlight();
+          highlightTile(x,y);
+          return;
+        }
+        switch(currentConstraintType) {
+          case "thermo": {
+            // Thermo must be finished by hand
+            console.log("Thermo input");
+            if(lastClicked === null) {
+              // Save first click
+              lastClicked = [x,y];
+              highlightTile(x,y);
+              // Create new thermo
+              savedConstraints.thermo.push([[x,y]]);
+              drawCanvas();
+              return;
+            }
+            let [lastX, lastY] = lastClicked;
+            if (!areAdjacent(x, y, lastX, lastY, true)) {
+              alert(`Please choose something adjacent to (${lastX},${lastY})`);
+              return;
+            }
+            lastClicked = [x,y];
+            // Add to end of last one
+            // TODO: Limit thermo length = 9
+            savedConstraints.thermo[savedConstraints.thermo.length - 1].push([x,y]);
+            removeAllHighlight();
+            highlightTile(x,y);
+            drawCanvas();
+            break;
+          }
+          case "arrow": {
+            // Arrow must be finished by hand
+            if(lastClicked === null) {
+              // Save first click
+              lastClicked = [x,y];
+              highlightTile(x,y);
+              // Create new arrow
+              savedConstraints.arrow.push([[x,y]])
+              drawCanvas();
+              return;
+            }
+            let [lastX, lastY] = lastClicked;
+            if (!areAdjacent(x, y, lastX, lastY, true)) {
+              alert(`Please choose something adjacent to (${lastY},${lastY})`);
+              return;
+            }
+            lastClicked = [x,y];
+            // Add to end of last one
+            // TODO: Limit arrow length = 5?
+            savedConstraints.arrow[savedConstraints.arrow.length - 1].push([x,y]);
+            drawCanvas();
+            removeAllHighlight();
+            highlightTile(x,y);
+            break;
+          }
+          case "kropkiAdjacent": {
+            // Kropki can be auto finished after 2
+            // Check for starting new kropki
+            if(lastClicked === null) {
+              lastClicked = [x,y];
+              return;
+            }
+            let [lastX, lastY] = lastClicked;
+            if (!areAdjacent(x, y, lastX, lastY, false)) {
+              alert(`Please choose something adjacent to (${lastX},${lastY})`);
+              return;
+            }
+            removeAllHighlight();
+            savedConstraints.kropkiAdjacent.push([[x,y],[lastX,lastY]]);
+            lastClicked = null;
+            drawCanvas();
+            break;
+          }
+          case "kropkiDouble": {
+            // Kropki can be auto finished after 2
+            // Check for starting new kropki
+            if(lastClicked === null) {
+              lastClicked = [x,y];
+              console.log("Had no last clicked, so starting new kropki");
+              return;
+            }
+            let [lastX, lastY] = lastClicked;
+            if (!areAdjacent(x, y, lastX, lastY, false)) {
+              alert(`Please choose something adjacent to (${x},${y})`);
+              return;
+            }
+            removeAllHighlight();
+            savedConstraints.kropkiDouble.push([[x,y],[lastX,lastY]]);
+            lastClicked = null;
+            drawCanvas();
+            break;
+          }
+          case "germanWhispers": {
+            // Must be finished by hand
+            if(lastClicked === null) {
+              // Save first click
+              lastClicked = [x,y];
+              highlightTile(x,y);
+              // Create new line
+              savedConstraints.germanWhispers.push([[x,y]])
+              drawCanvas();
+              return;
+            }
+            let [lastX, lastY] = lastClicked;
+            if (!areAdjacent(x, y, lastX, lastY, true)) {
+              alert(`Please choose something adjacent to (${lastX},${lastY})`);
+              return;
+            }
+            lastClicked = [x,y];
+            // Add to end of last one
+            savedConstraints.germanWhispers[savedConstraints.germanWhispers.length - 1].push([x,y]);
+            drawCanvas();
+            removeAllHighlight();
+            highlightTile(x,y);
+            break;
+          } 
+          default:{
+            console.error("Invalid input type of "+currentConstraintType);
+            currentConstraintType = "none";
+          }
+        }
       });
     }
   }
-  // Clear grid button
-  document.getElementById("clear-grid")?.addEventListener('click', event => {
-    if(!confirm("Are you sure you want to clear the grid?"))
-      return;
-    for (let y = 0; y < 9; y++) {
-      for (let x = 0; x < 9; x++) {
-        inputGrid[y][x].value = "";
-      }
-    }
-    clearSavedConstraints();
-    drawCanvas();
-  })
+  
   // File input
   document.getElementById("import")?.addEventListener('change', event => {
     let files = (<HTMLInputElement>event.target).files;
@@ -59,9 +172,52 @@ export function init() {
       if (controlElem === null) return;
       controlElem.hidden = false;
       // Stop inputs from functioning
+      lastClicked = null;
+      //@ts-ignore This is okay as it should always be the right input
+      currentConstraintType = input;
       lockAllInputs();
     })
+  });
+  // Add events for stopping adding to current input type
+  Array.from(document.getElementsByClassName("finish-input")).forEach(elem => {
+    let btn = <HTMLButtonElement>elem;
+    btn.addEventListener('click', event => {
+      removeAllHighlight();
+
+      // TODO: Check for single length elements and remove them
+
+      currentConstraintType = 'none';
+      lastClicked = null;
+      // Hide all input types
+      controls.forEach(c => (<HTMLElement>c).hidden = true);
+      // Show choice buttons
+      let choose = document.getElementById("choose-constraint");
+      if(choose === null) return;
+      choose.hidden = false;
+      unlockAllInputs();
+    })
   })
+  // Clear grid button
+  document.getElementById("clear-grid")?.addEventListener('click', event => {
+    if(!confirm("Are you sure you want to clear the grid?"))
+      return;
+    for (let y = 0; y < 9; y++) {
+      for (let x = 0; x < 9; x++) {
+        inputGrid[y][x].value = "";
+      }
+    }
+    // Some cleanup
+    currentConstraintType = "none";
+    controls.forEach(c => (<HTMLElement>c).hidden = true);
+    let choose = document.getElementById("choose-constraint");
+    if(choose === null) return;
+    choose.hidden = false;
+    removeAllHighlight();
+    unlockAllInputs();
+    clearSavedConstraints();
+    drawCanvas();
+  })
+
   drawCanvas();
 }
 
@@ -116,6 +272,7 @@ export function drawCanvas() {
     const width = 4;
     let [arrX,arrY] = arrow[0];
     circleAtTile(ctx, false, arrX, arrY, 0.8, color, width);
+    if(arrow.length === 1) return;
     // Draw from outer radius to center of second tile
     lineBetweenTiles(ctx, 
       ...movePointInDir(arrow[0][0], arrow[0][1],arrow[1][0], arrow[1][1], 0.4), 
@@ -258,10 +415,10 @@ export function hideLoadingScreen() {
 }
 
 /** Used for tracking for placing constraints */
-export let lastClicked:HTMLInputElement | null = null
+export let lastClicked:[number, number] | null = null
 
 /** Used for tracking the state ofthe currently placing constraint */
-let currentConstraint: [number, number][] = [];
+let currentConstraintType: 'none'|'thermo'|'arrow'|'kropkiAdjacent'|'kropkiDouble'|'germanWhispers' = "none";
 
 /** Tracks constraints that have saved memory */
 export let savedConstraints:{
@@ -286,6 +443,18 @@ export function clearSavedConstraints(){
   savedConstraints.germanWhispers = [];
 }
 // This will include the event listeners for highlighting and such
+
+function highlightTile(x:number,y:number) {
+  inputGrid[y][x].classList.add("highlight");
+}
+
+function removeAllHighlight() {
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      inputGrid[i][j].classList.remove("highlight");
+    }
+  }
+}
 
 /** Changes the color of all "seen" tiles from the currently clicked on one */
 function highlightSeen(row:number, col:number) {
@@ -315,7 +484,7 @@ export function getConstraints():string[]{
   return out;
 }
 
-function importFromFile(json:any) {
+export function importFromFile(json:any) {
   // Validate object
   clearSavedConstraints();
   console.log(json);
