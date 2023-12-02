@@ -115,43 +115,45 @@ if (runBtn === undefined || runBtn === null) {
     }
 
     // thermo
-    if (constraints.includes("thermo")) {
+    // Don't need to check for thermo contraint checkbox.
+    //  If you've added one, you likely want the rule applied
+    savedConstraints.thermo.forEach(thermo => {
+      // Each thermo is a list of [x,y] pairs
+      // First one should be the bulb
       // TODO
-      savedConstraints.thermo.forEach(thermo => {
-        // Each thermo is a list of [x,y] pairs
-        // First one should be the bulb
         
-      });
-    }
+    });
 
     // arrow
-    if (constraints.includes("arrow")) {
+    // Don't need to check for arrow contraint checkbox.
+    //  If you've added one, you likely want the rule applied
+    savedConstraints.arrow.forEach(arrow => {
+      // Each arrow is a list of [x,y] pairs
       // TODO
-      savedConstraints.arrow.forEach(arrow => {
-        // Each arrow is a list of [x,y] pairs
 
-      })
-    }
+    })
 
     // kropki
-    if (constraints.includes("kropki")) {
+    // Don't need to check for thermo contraint checkbox.
+    //  If you've added one, you likely want the rule applied
+    savedConstraints.kropkiAdjacent.forEach(kka => {
+      // Each kropki is [[x1,y1], [x2,y2]]
       // TODO
-      savedConstraints.kropkiAdjacent.forEach(kka => {
-        // Each kropki is [[x1,y1], [x2,y2]]
 
-      })
-      savedConstraints.kropkiDouble.forEach(kkd => {
-        // Each kropki is [[x1,y1], [x2,y2]]
-
-      })
-    }
+    })
+    savedConstraints.kropkiDouble.forEach(kkd => {
+      // Each kropki is [[x1,y1], [x2,y2]]
+      // TODO
+    })
 
     // german whispers
-    if (constraints.includes("germanWhispers")) {
-      savedConstraints.germanWhispers.forEach(whisper => {
-        // Each whisper is [x,y] array
-      })
-    }
+    // Don't need to check for thermo contraint checkbox.
+    //  If you've added one, you likely want the rule applied
+    // if (constraints.includes("germanWhispers")) {
+    savedConstraints.germanWhispers.forEach(whisper => {
+      // Each whisper is [x,y] array
+      // TODO
+    })
 
     if (await solver.check() === "sat") {
       hideLoadingScreen();

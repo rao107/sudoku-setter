@@ -74,6 +74,8 @@ export function init() {
             // Check for starting new kropki
             if(lastClicked === null) {
               lastClicked = [x,y];
+              removeAllHighlight();
+              highlightTile(x,y);
               return;
             }
             let [lastX, lastY] = lastClicked;
@@ -92,7 +94,8 @@ export function init() {
             // Check for starting new kropki
             if(lastClicked === null) {
               lastClicked = [x,y];
-              console.log("Had no last clicked, so starting new kropki");
+              removeAllHighlight();
+              highlightTile(x,y);
               return;
             }
             let [lastX, lastY] = lastClicked;
