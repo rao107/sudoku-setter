@@ -41,7 +41,7 @@ if (runBtn === undefined || runBtn === null) {
     console.log(sudokuGrid);
 
     let { Context } = await window.z3Promise;
-    let { Solver, Int, Distinct } = Context("main");
+    let { Solver, Int, Distinct, /*Sum,*/ Or } = Context("main");
     let solver = new Solver();
 
     let z3Grid: z3.Arith<"main">[][] = Array.from(Array(9), () => new Array(9));
@@ -115,44 +115,59 @@ if (runBtn === undefined || runBtn === null) {
     }
 
     // thermo
-    // Don't need to check for thermo contraint checkbox.
-    //  If you've added one, you likely want the rule applied
     savedConstraints.thermo.forEach(thermo => {
-      // Each thermo is a list of [x,y] pairs
-      // First one should be the bulb
-      // TODO
-        
+      for (let i = 0; i < thermo.length - 1; i++) {
+        solver.add(z3Grid[thermo[i][1]][thermo[i][0]].lt(z3Grid[thermo[i+1][1]][thermo[i+1][0]]));
+      }
     });
 
     // arrow
-    // Don't need to check for arrow contraint checkbox.
-    //  If you've added one, you likely want the rule applied
     savedConstraints.arrow.forEach(arrow => {
       // Each arrow is a list of [x,y] pairs
       // TODO
-
+      let temp = [];
+      for (let i = 1; i < arrow.length; i++) {
+        temp.push(z3Grid[arrow[i][1]][arrow[i][0]]);
+      }
+      //solver.add(z3Grid[arrow[0][1]][arrow[0][0]].eq(Sum(...temp)));
     })
 
     // kropki
-    // Don't need to check for thermo contraint checkbox.
-    //  If you've added one, you likely want the rule applied
     savedConstraints.kropkiAdjacent.forEach(kka => {
       // Each kropki is [[x1,y1], [x2,y2]]
-      // TODO
-
+      solver.add(Or(
+        z3Grid[kka[0][1]][kka[0][0]].sub(z3Grid[kka[1][1]][kka[1][0]]).eq(1),
+        z3Grid[kka[1][1]][kka[1][0]].sub(z3Grid[kka[0][1]][kka[0][0]]).eq(1)
+      ));
     })
     savedConstraints.kropkiDouble.forEach(kkd => {
       // Each kropki is [[x1,y1], [x2,y2]]
-      // TODO
+      solver.add(Or(
+        z3Grid[kkd[0][1]][kkd[0][0]].mul(2).eq(z3Grid[kkd[1][1]][kkd[1][0]]),
+        z3Grid[kkd[1][1]][kkd[1][0]].mul(2).eq(z3Grid[kkd[0][1]][kkd[0][0]])
+      ));
     })
 
     // german whispers
-    // Don't need to check for thermo contraint checkbox.
-    //  If you've added one, you likely want the rule applied
-    // if (constraints.includes("germanWhispers")) {
     savedConstraints.germanWhispers.forEach(whisper => {
       // Each whisper is [x,y] array
-      // TODO
+      if (whisper.length < 2) {
+        // do nothing
+      } else {
+        for (let i = 0; i < whisper.length; i++) {
+          solver.add(z3Grid[whisper[i][1]][whisper[i][0]].neq(5));
+        }
+        for (let i = 0; i < whisper.length - 1; i++) {
+          solver.add(Or(
+            z3Grid[whisper[i][1]][whisper[i][0]].sub(z3Grid[whisper[i+1][1]][whisper[i+1][0]]).ge(5),
+            z3Grid[whisper[i][1]][whisper[i][0]].sub(z3Grid[whisper[i+1][1]][whisper[i+1][0]]).le(-5)
+          ));
+        }
+        solver.add(Or(
+          z3Grid[whisper[whisper.length-1][1]][whisper[whisper.length-1][0]].sub(z3Grid[whisper[whisper.length-2][1]][whisper[whisper.length-2][0]]).ge(5),
+          z3Grid[whisper[whisper.length-1][1]][whisper[whisper.length-1][0]].sub(z3Grid[whisper[whisper.length-2][1]][whisper[whisper.length-2][0]]).le(-5),          
+        ));
+      }
     })
 
     if (await solver.check() === "sat") {
