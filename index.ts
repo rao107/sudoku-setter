@@ -142,9 +142,17 @@ if (runBtn === undefined || runBtn === null) {
     })
     savedConstraints.kropkiDouble.forEach(kkd => {
       // Each kropki is [[x1,y1], [x2,y2]]
+      let fst = z3Grid[kkd[0][1]][kkd[0][0]];
+      let snd = z3Grid[kkd[1][1]][kkd[1][0]];
       solver.add(Or(
-        z3Grid[kkd[0][1]][kkd[0][0]].mul(2).eq(z3Grid[kkd[1][1]][kkd[1][0]]),
-        z3Grid[kkd[1][1]][kkd[1][0]].mul(2).eq(z3Grid[kkd[0][1]][kkd[0][0]])
+        fst.eq(1).and(snd.eq(2)),
+        fst.eq(2).and(snd.eq(1)),
+        fst.eq(2).and(snd.eq(4)),
+        fst.eq(3).and(snd.eq(6)),
+        fst.eq(4).and(snd.eq(2)),
+        fst.eq(4).and(snd.eq(8)),
+        fst.eq(6).and(snd.eq(3)),
+        fst.eq(8).and(snd.eq(4))
       ));
     })
 
@@ -154,9 +162,6 @@ if (runBtn === undefined || runBtn === null) {
       if (whisper.length < 2) {
         // do nothing
       } else {
-        for (let i = 0; i < whisper.length; i++) {
-          solver.add(z3Grid[whisper[i][1]][whisper[i][0]].neq(5));
-        }
         for (let i = 0; i < whisper.length - 1; i++) {
           solver.add(Or(
             z3Grid[whisper[i][1]][whisper[i][0]].sub(z3Grid[whisper[i+1][1]][whisper[i+1][0]]).ge(5),
