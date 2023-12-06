@@ -209,6 +209,12 @@ export function init() {
         inputGrid[y][x].value = "";
       }
     }
+    // Remove placeholders
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        inputGrid[i][j].placeholder = "";
+      }
+    }
     // Some cleanup
     currentConstraintType = "none";
     controls.forEach(c => (<HTMLElement>c).hidden = true);
