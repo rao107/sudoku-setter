@@ -9,6 +9,8 @@ import {
   importFromFile,
 } from './setup';
 
+const MAX_SUDOKUS = 100;
+
 declare global {
   interface Window { z3Promise: ReturnType<typeof z3.init>; }
 }
@@ -224,6 +226,7 @@ if (runBtn === undefined || runBtn === null) {
         addAtLeastDifferenceConstraint(solver, z3Grid, pair, 5, Or);
       }
     });
+    console.log("added constraints");
     if (await solver.check() === "sat") {
       hideLoadingScreen();
       // Was SAT so tell the output
@@ -250,8 +253,97 @@ if (numSolBtn === undefined || numSolBtn === null) {
 } else {
   numSolBtn.addEventListener("click", async () => {
     showLoadingScreen();
-    console.log("test");
-    hideLoadingScreen();
+    let constraints = getConstraints();
+
+    const sudokuGrid: number[][] = getGrid();
+
+    let { Context } = await window.z3Promise;
+    let { Solver, Int, Distinct, Or, Not } = Context("main");
+    let solver = new Solver();
+
+    let z3Grid: z3.Arith<"main">[][] = Array.from(Array(9), () => new Array(9));
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        z3Grid[i][j] = Int.const(`x_${i}${j}`);
+        if (1 <= sudokuGrid[i][j] && sudokuGrid[i][j] <= 9) {
+          solver.add(z3Grid[i][j].eq(sudokuGrid[i][j]));
+        } else {
+          solver.add(z3Grid[i][j].ge(1).and(z3Grid[i][j].le(9)));
+        }
+      }
+    }
+    // 1-9horiz
+    if (constraints.includes('1-9horiz')) {
+      addRowConstraint(solver, z3Grid, Distinct);
+    }
+    // 1-9vert
+    if (constraints.includes('1-9vert')) {
+      addColConstraint(solver, z3Grid, Distinct);
+    }
+    // 1-9nonet
+    if (constraints.includes('1-9nonet')) {
+      addNonetConstraint(solver, z3Grid, Distinct); 
+    }
+    // antiking
+    if (constraints.includes('antiking')) {
+      addOffsetConstraint(solver, z3Grid, [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]);
+    }
+    // antiknight
+    if (constraints.includes('antiknight')) {
+      addOffsetConstraint(solver, z3Grid, [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]]);
+    }
+    // thermo
+    savedConstraints.thermo.forEach(thermo => {
+      addIncreasingConstraint(solver, z3Grid, thermo);
+    });
+    // arrow
+    // TODO TODO TODO TODO TODO
+    // kropki
+    savedConstraints.kropkiAdjacent.forEach(kka => {
+      addExactDifferenceConstraint(solver, z3Grid, kka, 1, Or);
+    });
+    savedConstraints.kropkiDouble.forEach(kkd => {
+      addKropkiDoubleConstraint(solver, z3Grid, kkd, Or);
+    });
+    // german whispers
+    savedConstraints.germanWhispers.forEach(whisper => {
+      // Each whisper is [x,y] array
+      for (let i = 0; i < whisper.length - 1; i++) {
+        let pair = [whisper[i], whisper[i + 1]];
+        addAtLeastDifferenceConstraint(solver, z3Grid, pair, 5, Or);
+      }
+    });
+    console.log("added constraints");
+    let loadingScreenOn = true;
+    // counting the number of sudokus
+    for (let i = 0; i < MAX_SUDOKUS; i++) {
+      console.log(`finding solution ${i+1}`);
+      if (await solver.check() == "sat") {
+        console.log("aaa");
+        const results: [number, number, number][] = [];
+        const resultGrid: number[][] = Array.from(Array(9), () => new Array(9));
+        for (let i = 0; i < 9; i++) {
+          for (let j = 0; j < 9; j++) {
+            // i hate this parseInt weirdness but idk how to get an integer directly
+            results.push([i, j, parseInt(solver.model().get(z3Grid[i][j]).toString())]);
+            resultGrid[i][j] = parseInt(solver.model().get(z3Grid[i][j]).toString());
+          }
+        }
+        console.log(gridToString(resultGrid));
+        solver.add(Or(...results.map(x => z3Grid[x[0]][x[1]].neq(x[2]))));
+      } else {
+        hideLoadingScreen();
+        loadingScreenOn = false;
+        alert(`Found ${i} possible solution(s)`);
+        break;
+      }
+      if (i == MAX_SUDOKUS - 1 && loadingScreenOn) {
+        hideLoadingScreen();
+        loadingScreenOn = false;
+        alert(`Found >${MAX_SUDOKUS} solutions`);
+      }
+    }
+
   });
 }
 
@@ -354,7 +446,3 @@ addEventListener('load', event => {
   console.log("Load");
   loadFromLocalStorage();
 })
-
-function Sum(arg0: z3.Arith<"main">): z3.CoercibleToExpr<"main"> {
-  throw new Error('Function not implemented.');
-}
