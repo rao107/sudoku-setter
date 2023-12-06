@@ -156,6 +156,13 @@ if (runBtn === undefined || runBtn === null) {
     const sudokuGrid: number[][] = getGrid();
     console.log(sudokuGrid);
 
+    // Remove placeholders
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        inputGrid[i][j].placeholder = "";
+      }
+    }
+
     let { Context } = await window.z3Promise;
     let { Solver, Int, Distinct, Or, If, And } = Context("main");
     let solver = new Solver();
@@ -235,10 +242,15 @@ if (runBtn === undefined || runBtn === null) {
         for (let j = 0; j < 9; j++) {
           // i hate this parseInt weirdness but idk how to get an integer directly
           resultGrid[i][j] = parseInt(solver.model().get(z3Grid[i][j]).toString());
+          if (inputGrid[i][j].value == "") {
+            // Update placeholder
+            inputGrid[i][j].placeholder = resultGrid[i][j];
+          }
         }
       }
       console.log(gridToString(resultGrid));
-      alert(`One Solution is\n${gridToString(resultGrid)}`);
+      
+      // alert(`One Solution is\n${gridToString(resultGrid)}`);
 
     } else {
       hideLoadingScreen();

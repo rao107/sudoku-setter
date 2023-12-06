@@ -95,6 +95,11 @@
   vertical-align: middle;
 }
 
+::placeholder {
+  color: peru;
+  opacity: 1; /* Firefox */
+}
+
 /* Taken from https://loading.io/css/ with CC0 liscence */
 
 .lds-ring {
